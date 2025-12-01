@@ -1,5 +1,6 @@
 package com.kodnest.RestAPIs.service.impl;
 
+import com.kodnest.RestAPIs.DTO.AddStudentRequestDto;
 import com.kodnest.RestAPIs.DTO.StudentDto;
 import com.kodnest.RestAPIs.entity.Student;
 import com.kodnest.RestAPIs.repositry.StudentRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -47,5 +49,55 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + id));
         return modelMapper.map(student, StudentDto.class);
+    }
+
+    @Override
+    public StudentDto createNewStudent(AddStudentRequestDto addStudentRequestDto) {
+        Student newStudent = modelMapper.map(addStudentRequestDto, Student.class);
+        Student student = studentRepository.save(newStudent);
+
+        return modelMapper.map(student, StudentDto.class);
+    }
+
+    @Override
+    public void deleteStudentById(Long id) {
+        if(!studentRepository.existsById(id)) {
+            throw  new IllegalArgumentException("Student does not exists by id " + id);
+        }
+        studentRepository.deleteById(id);
+    }
+
+    @Override
+    public StudentDto upddateStudent(Long id, AddStudentRequestDto addStudentRequestDto) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + id));
+
+        modelMapper.map(addStudentRequestDto, student); //update hojayega
+
+        student = studentRepository.save(student);
+        return modelMapper.map(student, StudentDto.class);
+    }
+
+    @Override
+    public StudentDto updatePartialStudent(Long id, Map<String, Object> updates) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + id));
+
+        updates.forEach((field, value) -> {
+            switch (field) {
+                case "name" :
+                    student.setName((String) value);
+                    break;
+                case "email" :
+                    student.setEmail((String) value);
+                    break;
+
+                default:
+                    throw  new IllegalArgumentException("Field is not supported");
+            }
+        });
+
+        Student saveStudent = studentRepository.save(student);
+        return modelMapper.map(saveStudent,StudentDto.class);
     }
 }
