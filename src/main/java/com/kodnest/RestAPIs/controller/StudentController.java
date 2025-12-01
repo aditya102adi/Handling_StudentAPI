@@ -3,6 +3,7 @@ package com.kodnest.RestAPIs.controller;
 import com.kodnest.RestAPIs.DTO.AddStudentRequestDto;
 import com.kodnest.RestAPIs.DTO.StudentDto;
 import com.kodnest.RestAPIs.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,8 @@ public class StudentController {
        return ResponseEntity.ok(studentService.getStudentByID(id));
     }
 
-    @PostMapping //used for creating
-    public ResponseEntity<StudentDto> createNewStudent(@RequestBody AddStudentRequestDto addStudentRequestDto) {
+    @PostMapping //used for creating a new user
+    public ResponseEntity<StudentDto> createNewStudent(@RequestBody @Valid AddStudentRequestDto addStudentRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createNewStudent(addStudentRequestDto));
     }
 
