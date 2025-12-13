@@ -17,6 +17,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    //DI
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -31,7 +32,7 @@ public class StudentController {
        return ResponseEntity.ok(studentService.getStudentByID(id));
     }
 
-    @PostMapping //used for creating a new user
+    @PostMapping //used for creating a new user 
     public ResponseEntity<StudentDto> createNewStudent(@RequestBody @Valid AddStudentRequestDto addStudentRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createNewStudent(addStudentRequestDto));
     }

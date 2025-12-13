@@ -83,19 +83,21 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + id));
 
-        updates.forEach((field, value) -> {
-            switch (field) {
-                case "name" :
-                    student.setName((String) value);
-                    break;
-                case "email" :
-                    student.setEmail((String) value);
-                    break;
+        for (Map.Entry<String, Object> entry : updates.entrySet()) {
 
-                default:
-                    throw  new IllegalArgumentException("Field is not supported");
+            String field = entry.getKey();
+            Object value = entry.getValue();
+
+            if (field.equals("name")) {
+                student.setName((String) value);
             }
-        });
+            else if (field.equals("email")) {
+                student.setEmail((String) value);
+            }
+            else {
+                throw new IllegalArgumentException("Field is not supported");
+            }
+        }
 
         Student saveStudent = studentRepository.save(student);
         return modelMapper.map(saveStudent,StudentDto.class);
